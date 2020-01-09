@@ -42,7 +42,7 @@ class ParamsActivity : AppCompatActivity() {
 
         textView.movementMethod = ScrollingMovementMethod()
         textView.text = """
-            ActivityParmas:
+            ActivityParams:
                  val customKeyParams = $customKeyParams
                  val byteP = $byteParams
                  val shortP = $shortParams

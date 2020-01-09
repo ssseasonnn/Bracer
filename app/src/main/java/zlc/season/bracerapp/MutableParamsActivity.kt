@@ -9,6 +9,8 @@ import zlc.season.bracer.mutableParams
 import zlc.season.bracer.start
 
 class MutableParamsActivity : AppCompatActivity() {
+    var customKeyParams by mutableParams<Byte>("this is custom key")
+
     var byteParams by mutableParams<Byte>()
     var shortParams by mutableParams<Short>()
     var intParams by mutableParams<Int>()
@@ -40,7 +42,8 @@ class MutableParamsActivity : AppCompatActivity() {
 
         textView.movementMethod = ScrollingMovementMethod()
         textView.text = """
-            ActivityParmas:
+            ActivityParams:
+                var customKeyParams = $customKeyParams
                 var byteP = $byteParams
                 var shortP = $shortParams
                 var intP = $intParams
@@ -102,6 +105,8 @@ class MutableParamsActivity : AppCompatActivity() {
 
     private fun startActivityByParams() {
         MutableParamsActivity().apply {
+            customKeyParams = 1
+
             byteParams = 1
             shortParams = 1
             intParams = 1

@@ -76,6 +76,7 @@ fun <T> Fragment.mutableParams(customKey: String = "") =
  * @param context Must be activity context
  */
 fun Activity.intent(context: Context): Intent {
+    if (context !is Activity) throw IllegalStateException("Must use activity context!")
     val intent = intentsMap[this] ?: throw IllegalStateException("Intent not found")
     intent.setClass(context, this::class.java)
     return intent
@@ -87,6 +88,8 @@ fun Activity.intent(context: Context): Intent {
  * @param context Must be activity context
  */
 fun Activity.start(context: Context) {
+    if (context !is Activity) throw IllegalStateException("Must use activity context!")
+
     val intent = intentsMap[this]
     if (intent == null) {
         val newIntent = Intent(context, this::class.java)

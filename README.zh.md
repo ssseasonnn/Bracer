@@ -4,7 +4,7 @@
 
 # Bracer
 
-Pass parameters safely and quickly between activities or fragments.
+在各个Activity或者各个Fragment之间安全快速的传递参数
 
 *Read this in other languages: [中文](README.zh.md), [English](README.md), [Change Log](CHANGELOG.md)*
 
@@ -24,21 +24,21 @@ allprojects {
 
 ```gradle
 dependencies {
-	implementation 'com.github.ssseasonnn:Bracer:1.0.1
+	implementation 'com.github.ssseasonnn:Bracer:1.0.0'
 }
 ```
 
 ## Start
 
-### Get Parameters
+### 获取参数
 
-- Get parameters from Activity's Intent:
+- 从Activity的Intent中获取参数
   
     ```kotlin
-        //Use val and by params
+        //使用 val 和 by params
         class ParamsActivity : AppCompatActivity() {
-            //Get the parameter using the name of the property as the key
-            //This code is equivalent to：
+            //默认使用该属性的名字作为Key
+            //这行代码等价于：
             //val byteParams = intent.getByteExtra("byteParams", 0)
             private val byteParams by params<Byte>()
 
@@ -47,46 +47,45 @@ dependencies {
             private val booleanParams by params<Boolean>()
             private val stringParams by params<String>()
 
-            //Get basic type params with custom key
-            //This code is equivalent to：
+            //使用自定义Key
+            //等价于：
             //val customKeyParams = intent.getByteExtra("this is custom key", 0)
             private val customKeyParams by params<Byte>("this is custom key")
             
         }
     ```
 
-- Get parameters from Fragment's Arguments:
+- 从Fragment的Arguments中获取参数:
   
     ```kotlin
-        //Use val and by params
+        //使用 val 和 by params
         class ParamsFragment : Fragment() {
-            //Get the parameter using the name of the property as the key
-            //This code is equivalent to：
+            //默认使用该属性的名字作为Key
+            //这行代码等价于：
             //val byteParams = arguments.getByte("byteParams", 0)
             private val byteParams by params<Byte>()
-
             private val intParams by params<Int>()
             private val floatParams by params<Float>()
             private val booleanParams by params<Boolean>()
             private val stringParams by params<String>()
 
-            //Get basic type params with custom key
-            //This code is equivalent to：
+            //使用自定义Key
+            //等价于：
             //val customKeyParams = arguments.getByte("this is custom key", 0)
             private val customKeyParams by params<Byte>("this is custom key")
             
         }
     ```
 
-### Pass Parameters
+### 传递参数
 
-- Pass parameters to Activity:
+- 给Activity传参：
 
     ```kotlin
-        //Use var and by mutableParams
+        //使用 var 和 by mutableParams
         class MutableParamsActivity : AppCompatActivity() {
+            
             var byteParams by mutableParams<Byte>()
-
             var intParams by mutableParams<Int>()
             var floatParams by mutableParams<Float>()
             var booleanParams by mutableParams<Boolean>()
@@ -96,7 +95,7 @@ dependencies {
             //...
         }
 
-        Then:
+        然后:
 
         MutableParamsActivity().apply {
             customKeyParams = 1
@@ -109,12 +108,12 @@ dependencies {
         }.start(context)
     ```
 
-- Pass parameters to Fragment:
+- 给Fragment传递参数:
 
     ```kotlin
-        //Use var and by mutableParams
+        //使用 var 和 by mutableParams
         class MutableParamsFragment : Fragment() {
-            //Should use var and mutableParams
+            
             var byteParams by mutableParams<Byte>()
             var intParams by mutableParams<Int>()
             var floatParams by mutableParams<Float>()
@@ -125,7 +124,8 @@ dependencies {
             //...
         }
 
-        Then:
+        然后:
+
         MutableParamsFragment().apply {
             customKeyParams = 1
 

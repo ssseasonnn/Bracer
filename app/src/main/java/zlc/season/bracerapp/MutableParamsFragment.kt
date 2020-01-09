@@ -2,7 +2,7 @@ package zlc.season.bracerapp
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
+import android.support.v4.app.Fragment
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_test.*
 import zlc.season.bracer.mutableParams
 
-class MutableParamsFragment : DialogFragment() {
+class MutableParamsFragment : Fragment() {
     var byteParams by mutableParams<Byte>()
     var shortParams by mutableParams<Short>()
     var intParams by mutableParams<Int>()

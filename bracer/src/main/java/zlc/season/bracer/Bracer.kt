@@ -6,10 +6,69 @@ import android.content.Intent
 import android.support.v4.app.Fragment
 import android.util.Log
 
-fun <T : Any> Activity.params() = ActivityParamsDelegate<T>()
+/**
+ * Get parameters quickly from Activity's Intent
+ *
+ * Usage:
+ *
+ * class MainActivity : AppCompatActivity() {
+ *      val byteParams by params<Byte>()
+ * }
+ *
+ */
+fun <T> Activity.params(customKey: String = "") = ActivityParamsDelegate<T>(customKey)
 
-fun <T : Any> Fragment.params() = FragmentParamsDelegate<T>()
+/**
+ * Get parameters quickly from Fragment's Argument
+ *
+ * Usage:
+ *
+ * class TestFragment : Fragment() {
+ *      val byteParams by params<Byte>()
+ * }
+ *
+ */
+fun <T> Fragment.params(customKey: String = "") = FragmentParamsDelegate<T>(customKey)
 
+/**
+ * Pass parameter to Activity quickly and
+ * get parameters quickly from Activity's Intent
+ *
+ * Usage:
+ *
+ * class MainActivity : AppCompatActivity() {
+ *      var byteParams by params<Byte>()
+ * }
+ *
+ * Pass value:
+ *
+ * MainActivity().apply {
+ *      byteParams = 1
+ * }.start(context)
+ *
+ */
+fun <T> Activity.mutableParams(customKey: String = "") =
+    ActivityMutableParamsDelegate<T>(customKey)
+
+/**
+ * Pass parameter to Fragment quickly and
+ * get parameters quickly from Fragment's Argument
+ *
+ * Usage:
+ *
+ * class TestFragment : Fragment() {
+ *      var byteParams by params<Byte>()
+ * }
+ *
+ * Pass value:
+ *
+ * TestFragment().apply {
+ *      byteParams = 1
+ * }
+ *
+ */
+fun <T> Fragment.mutableParams(customKey: String = "") =
+    FragmentMutableParamsDelegate<T>(customKey)
 
 /**
  * Get intent with params
@@ -28,10 +87,15 @@ fun Activity.intent(context: Context): Intent {
  * @param context Must be activity context
  */
 fun Activity.start(context: Context) {
-    val intent = intentsMap[this] ?: throw IllegalStateException("Intent not found")
-    intent.setClass(context, this::class.java)
-    context.startActivity(intent)
-    intentsMap.remove(this)
+    val intent = intentsMap[this]
+    if (intent == null) {
+        val newIntent = Intent(context, this::class.java)
+        context.startActivity(newIntent)
+    } else {
+        intent.setClass(context, this::class.java)
+        context.startActivity(intent)
+        intentsMap.remove(this)
+    }
 }
 
 internal fun log(any: Any) {

@@ -4,27 +4,39 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.support.v4.app.Fragment
 import java.io.Serializable
+import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.typeOf
 
 @UseExperimental(ExperimentalStdlibApi::class)
-class FragmentParamsDelegate<T : Any> : ReadWriteProperty<Fragment, T> {
+class FragmentParamsDelegate<T>(
+    private val customKey: String = ""
+) : ReadOnlyProperty<Fragment, T> {
     override fun getValue(thisRef: Fragment, property: KProperty<*>): T {
-        return thisRef.arguments?.get(property) ?: Bundle().get(property)
+        return thisRef.arguments?.get(customKey, property) ?: Bundle().get(customKey, property)
+    }
+}
+
+@UseExperimental(ExperimentalStdlibApi::class)
+class FragmentMutableParamsDelegate<T>(
+    private val customKey: String = ""
+) : ReadWriteProperty<Fragment, T> {
+    override fun getValue(thisRef: Fragment, property: KProperty<*>): T {
+        return thisRef.arguments?.get(customKey, property) ?: Bundle().get(customKey, property)
     }
 
     override fun setValue(thisRef: Fragment, property: KProperty<*>, value: T) {
         val arguments = thisRef.arguments ?: Bundle().also {
             thisRef.arguments = it
         }
-        arguments.put(property.name, value)
+        arguments.put(customKey, property, value)
     }
 }
 
 @ExperimentalStdlibApi
-private fun <T> Bundle.get(kProperty: KProperty<*>): T {
-    val key = kProperty.name
+private fun <T> Bundle.get(customKey: String, kProperty: KProperty<*>): T {
+    val key = if (customKey.isEmpty()) kProperty.name else customKey
     val result: Any = when (kProperty.returnType) {
         //basic type
         typeOf<Byte>() -> getByte(key, 0)
@@ -58,7 +70,8 @@ private fun <T> Bundle.get(kProperty: KProperty<*>): T {
     return result as T
 }
 
-private fun <T> Bundle.put(key: String, value: T) {
+private fun <T> Bundle.put(customKey: String, kProperty: KProperty<*>, value: T) {
+    val key = if (customKey.isEmpty()) kProperty.name else customKey
     when (value) {
         //basic type
         is Byte -> putByte(key, value)
@@ -91,8 +104,6 @@ private fun <T> Bundle.put(key: String, value: T) {
 
         //custom type
         is Bundle -> putBundle(key, value)
-        is Parcelable -> putParcelable(key, value)
-        is Serializable -> putSerializable(key, value)
         else -> throw IllegalStateException("Type of property $key is not supported")
     }
 }

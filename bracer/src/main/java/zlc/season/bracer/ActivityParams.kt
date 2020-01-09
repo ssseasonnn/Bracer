@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import java.io.Serializable
+import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.typeOf
@@ -12,9 +13,21 @@ import kotlin.reflect.typeOf
 internal val intentsMap = mutableMapOf<Activity, Intent>()
 
 @UseExperimental(ExperimentalStdlibApi::class)
-class ActivityParamsDelegate<T : Any> : ReadWriteProperty<Activity, T> {
+class ActivityParamsDelegate<T>(
+    private val customKey: String = ""
+) : ReadOnlyProperty<Activity, T> {
     override fun getValue(thisRef: Activity, property: KProperty<*>): T {
-        return thisRef.intent.get(property)
+        return thisRef.intent.get(customKey, property)
+    }
+}
+
+@UseExperimental(ExperimentalStdlibApi::class)
+class ActivityMutableParamsDelegate<T>(
+    private val customKey: String = ""
+) : ReadWriteProperty<Activity, T> {
+
+    override fun getValue(thisRef: Activity, property: KProperty<*>): T {
+        return thisRef.intent.get(customKey, property)
     }
 
     override fun setValue(thisRef: Activity, property: KProperty<*>, value: T) {
@@ -24,13 +37,13 @@ class ActivityParamsDelegate<T : Any> : ReadWriteProperty<Activity, T> {
             intentsMap[thisRef] = intent
         }
 
-        intent.put(property.name, value)
+        intent.put(customKey, property, value)
     }
 }
 
 @ExperimentalStdlibApi
-private fun <T> Intent.get(kProperty: KProperty<*>): T {
-    val key = kProperty.name
+private fun <T> Intent.get(customKey: String, kProperty: KProperty<*>): T {
+    val key = if (customKey.isEmpty()) kProperty.name else customKey
     val result: Any = when (kProperty.returnType) {
         //basic type
         typeOf<Byte>() -> getByteExtra(key, 0)
@@ -65,7 +78,8 @@ private fun <T> Intent.get(kProperty: KProperty<*>): T {
 }
 
 
-private fun <T> Intent.put(key: String, value: T) {
+private fun <T> Intent.put(customKey: String, property: KProperty<*>, value: T) {
+    val key = if (customKey.isEmpty()) property.name else customKey
     when (value) {
         //basic type
         is Byte -> putExtra(key, value)
@@ -99,8 +113,6 @@ private fun <T> Intent.put(key: String, value: T) {
 
         //custom type
         is Bundle -> putExtra(key, value)
-        is Parcelable -> putExtra(key, value)
-        is Serializable -> putExtra(key, value)
         else -> throw IllegalStateException("Type of property $key is not supported")
     }
 }

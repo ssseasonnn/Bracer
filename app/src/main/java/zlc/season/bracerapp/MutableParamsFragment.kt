@@ -2,36 +2,36 @@ package zlc.season.bracerapp
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import android.support.v4.app.DialogFragment
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_test.*
-import zlc.season.bracer.params
+import zlc.season.bracer.mutableParams
 
-class TestFragment : Fragment() {
-    var byteParams by params<Byte>()
-    var shortParams by params<Short>()
-    var intParams by params<Int>()
-    var floatParams by params<Float>()
-    var doubleParams by params<Double>()
-    var longParams by params<Long>()
-    var booleanParams by params<Boolean>()
-    var charParams by params<Char>()
-    var charSequenceParams by params<CharSequence>()
-    var stringParams by params<String>()
+class MutableParamsFragment : DialogFragment() {
+    var byteParams by mutableParams<Byte>()
+    var shortParams by mutableParams<Short>()
+    var intParams by mutableParams<Int>()
+    var floatParams by mutableParams<Float>()
+    var doubleParams by mutableParams<Double>()
+    var longParams by mutableParams<Long>()
+    var booleanParams by mutableParams<Boolean>()
+    var charParams by mutableParams<Char>()
+    var charSequenceParams by mutableParams<CharSequence>()
+    var stringParams by mutableParams<String>()
 
-    var byteArrayParams by params<ByteArray>()
-    var shortArrayParams by params<ShortArray>()
-    var intArrayParams by params<IntArray>()
-    var floatArrayParams by params<FloatArray>()
-    var doubleArrayParams by params<DoubleArray>()
-    var longArrayParams by params<LongArray>()
-    var booleanArrayParams by params<BooleanArray>()
-    var charArrayParams by params<CharArray>()
-    var charSequenceArrayParams by params<Array<CharSequence>>()
-    var stringArrayParams by params<Array<String>>()
+    var byteArrayParams by mutableParams<ByteArray>()
+    var shortArrayParams by mutableParams<ShortArray>()
+    var intArrayParams by mutableParams<IntArray>()
+    var floatArrayParams by mutableParams<FloatArray>()
+    var doubleArrayParams by mutableParams<DoubleArray>()
+    var longArrayParams by mutableParams<LongArray>()
+    var booleanArrayParams by mutableParams<BooleanArray>()
+    var charArrayParams by mutableParams<CharArray>()
+    var charSequenceArrayParams by mutableParams<Array<CharSequence>>()
+    var stringArrayParams by mutableParams<Array<String>>()
 
     override fun onCreateView(
         inflater: LayoutInflater,

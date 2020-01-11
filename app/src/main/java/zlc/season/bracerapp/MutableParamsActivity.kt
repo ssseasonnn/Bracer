@@ -7,31 +7,44 @@ import android.text.method.ScrollingMovementMethod
 import kotlinx.android.synthetic.main.activity_test.*
 import zlc.season.bracer.mutableParams
 import zlc.season.bracer.start
+import java.math.BigDecimal
 
 class MutableParamsActivity : AppCompatActivity() {
     var customKeyParams by mutableParams<Byte>("this is custom key")
 
-    var byteParams by mutableParams<Byte>()
-    var shortParams by mutableParams<Short>()
-    var intParams by mutableParams<Int>()
-    var floatParams by mutableParams<Float>()
-    var doubleParams by mutableParams<Double>()
-    var longParams by mutableParams<Long>()
-    var booleanParams by mutableParams<Boolean>()
-    var charParams by mutableParams<Char>()
-    var charSequenceParams by mutableParams<CharSequence>()
-    var stringParams by mutableParams<String>()
+    var customParams by mutableParams<CustomParams1>()
+    var customParams2 by mutableParams<CustomParams2>()
 
-    var byteArrayParams by mutableParams<ByteArray>()
-    var shortArrayParams by mutableParams<ShortArray>()
-    var intArrayParams by mutableParams<IntArray>()
-    var floatArrayParams by mutableParams<FloatArray>()
-    var doubleArrayParams by mutableParams<DoubleArray>()
-    var longArrayParams by mutableParams<LongArray>()
-    var booleanArrayParams by mutableParams<BooleanArray>()
-    var charArrayParams by mutableParams<CharArray>()
-    var charSequenceArrayParams by mutableParams<Array<CharSequence>>()
-    var stringArrayParams by mutableParams<Array<String>>()
+    var parcelableParams by mutableParams<BigDecimal>(defaultValue = BigDecimal.ONE)
+    var stringListParams by mutableParams<ArrayList<String>>()
+    var arrayCustomParams by mutableParams<Array<CustomParams1>>()
+    var intListParams by mutableParams<ArrayList<Int>>()
+
+
+    var byteParams by mutableParams<Byte>(defaultValue = 1)
+    var shortParams by mutableParams<Short>(defaultValue = 1)
+    var intParams by mutableParams<Int>(defaultValue = 1)
+    var floatParams by mutableParams<Float>(defaultValue = 1f)
+    var doubleParams by mutableParams<Double>(defaultValue = 1.0)
+    var longParams by mutableParams<Long>(defaultValue = 1)
+    var booleanParams by mutableParams<Boolean>(defaultValue = true)
+    var charParams by mutableParams<Char>(defaultValue = 'A')
+    var charSequenceParams by mutableParams<CharSequence>(defaultValue = "AAA")
+    var stringParams by mutableParams<String>(defaultValue = "BBB")
+
+    var byteArrayParams by mutableParams<ByteArray>(defaultValue = ByteArray(2) { it.toByte() })
+    var shortArrayParams by mutableParams<ShortArray>(defaultValue = ShortArray(2) { it.toShort() })
+    var intArrayParams by mutableParams<IntArray>(defaultValue = IntArray(2) { it })
+    var floatArrayParams by mutableParams<FloatArray>(defaultValue = FloatArray(2) { it.toFloat() })
+    var doubleArrayParams by mutableParams<DoubleArray>(defaultValue = DoubleArray(2) { it.toDouble() })
+    var longArrayParams by mutableParams<LongArray>(defaultValue = LongArray(2) { it.toLong() })
+    var booleanArrayParams by mutableParams<BooleanArray>(defaultValue = BooleanArray(2) { true })
+    var charArrayParams by mutableParams<CharArray>(defaultValue = CharArray(2) { 'A' })
+    var charSequenceArrayParams by mutableParams<Array<CharSequence>>(
+        defaultValue = Array<CharSequence>(
+            2
+        ) { it.toString() })
+    var stringArrayParams by mutableParams<Array<String>>(defaultValue = Array<String>(2) { it.toString() })
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +57,13 @@ class MutableParamsActivity : AppCompatActivity() {
         textView.text = """
             ActivityParams:
                 var customKeyParams = $customKeyParams
+                var customParams = $customParams
+                var customParams2 = $customParams2
+                var parcelableParams = $parcelableParams
+                var stringListParams = $stringListParams
+                var arrayCustomParams = $arrayCustomParams
+                var intListParams = $intListParams
+                
                 var byteP = $byteParams
                 var shortP = $shortParams
                 var intP = $intParams
@@ -106,6 +126,13 @@ class MutableParamsActivity : AppCompatActivity() {
     private fun startActivityByParams() {
         MutableParamsActivity().apply {
             customKeyParams = 1
+            customParams = CustomParams1().apply {
+                a = "123"
+                b = 123
+                c = true
+            }
+
+            stringListParams = arrayListOf("123", "123", "123")
 
             byteParams = 1
             shortParams = 1

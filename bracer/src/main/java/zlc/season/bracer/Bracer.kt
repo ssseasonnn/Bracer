@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.support.v4.app.Fragment
 import android.util.Log
+import com.google.gson.Gson
 
 /**
  * Get parameters quickly from Activity's Intent
@@ -16,7 +17,8 @@ import android.util.Log
  * }
  *
  */
-fun <T> Activity.params(customKey: String = "") = ActivityParamsDelegate<T>(customKey)
+fun <T> Activity.params(customKey: String = "", defaultValue: T? = null) =
+    ActivityParamsDelegate(customKey, defaultValue)
 
 /**
  * Get parameters quickly from Fragment's Argument
@@ -28,7 +30,8 @@ fun <T> Activity.params(customKey: String = "") = ActivityParamsDelegate<T>(cust
  * }
  *
  */
-fun <T> Fragment.params(customKey: String = "") = FragmentParamsDelegate<T>(customKey)
+fun <T> Fragment.params(customKey: String = "", defaultValue: T? = null) =
+    FragmentParamsDelegate(customKey, defaultValue)
 
 /**
  * Pass parameter to Activity quickly and
@@ -47,8 +50,8 @@ fun <T> Fragment.params(customKey: String = "") = FragmentParamsDelegate<T>(cust
  * }.start(context)
  *
  */
-fun <T> Activity.mutableParams(customKey: String = "") =
-    ActivityMutableParamsDelegate<T>(customKey)
+fun <T> Activity.mutableParams(customKey: String = "", defaultValue: T? = null) =
+    ActivityMutableParamsDelegate(customKey, defaultValue)
 
 /**
  * Pass parameter to Fragment quickly and
@@ -67,8 +70,8 @@ fun <T> Activity.mutableParams(customKey: String = "") =
  * }
  *
  */
-fun <T> Fragment.mutableParams(customKey: String = "") =
-    FragmentMutableParamsDelegate<T>(customKey)
+fun <T> Fragment.mutableParams(customKey: String = "", defaultValue: T? = null) =
+    FragmentMutableParamsDelegate(customKey, defaultValue)
 
 /**
  * Get intent with params
@@ -101,10 +104,16 @@ fun Activity.start(context: Context) {
     }
 }
 
+
 internal fun log(any: Any) {
     Log.d("Bracer", any.toString())
 }
 
+internal val gson by lazy { Gson() }
+
+internal inline fun <P, reified R> P?.or(defaultValue: () -> R): R {
+    return this as? R ?: defaultValue()
+}
 
 
 

@@ -24,7 +24,7 @@ allprojects {
 
 ```gradle
 dependencies {
-	implementation 'com.github.ssseasonnn:Bracer:1.0.2
+	implementation 'com.github.ssseasonnn:Bracer:1.0.3'
 }
 ```
 

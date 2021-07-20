@@ -5,11 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.text.method.ScrollingMovementMethod
-import kotlinx.android.synthetic.main.activity_test.*
+import zlc.season.bracer.mutableParams
 import zlc.season.bracer.params
+import zlc.season.bracerapp.databinding.ActivityTestBinding
 
 class ParamsActivity : AppCompatActivity() {
     private val customKeyParams by params<Byte>("this is custom key")
+    var customParams by mutableParams<CustomParams1>()
 
     private val byteParams by params<Byte>()
     private val shortParams by params<Short>()
@@ -36,14 +38,16 @@ class ParamsActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_test)
+        val binding = ActivityTestBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         startFragmentNormal()
 
-        textView.movementMethod = ScrollingMovementMethod()
-        textView.text = """
+        binding.textView.movementMethod = ScrollingMovementMethod()
+        binding.textView.text = """
             ActivityParams:
                  val customKeyParams = $customKeyParams
+                 var customParams = $customParams
                  val byteP = $byteParams
                  val shortP = $shortParams
                  val intP = $intParams
@@ -69,11 +73,11 @@ class ParamsActivity : AppCompatActivity() {
         """.trimIndent()
 
 
-        btnNext.setOnClickListener {
+        binding.btnNext.setOnClickListener {
             startActivityNormal()
         }
 
-        btnDialog.setOnClickListener {
+        binding.btnDialog.setOnClickListener {
             showDialogNormal()
         }
     }

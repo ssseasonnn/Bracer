@@ -7,8 +7,8 @@ import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.fragment_test.*
 import zlc.season.bracer.params
+import zlc.season.bracerapp.databinding.FragmentTestBinding
 
 class ParamsFragment : Fragment() {
     private val byteParams by params<Byte>()
@@ -33,19 +33,22 @@ class ParamsFragment : Fragment() {
     private val charSequenceArrayParams by params<Array<CharSequence>>()
     private val stringArrayParams by params<Array<String>>()
 
+    var binding: FragmentTestBinding? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_test, container, false)
+        return FragmentTestBinding.inflate(inflater, container, false).also { this.binding = it }.root
     }
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        text.movementMethod = ScrollingMovementMethod()
-        text.text = """
+        val binding = binding ?: return
+        binding.text.movementMethod = ScrollingMovementMethod()
+        binding.text.text = """
             FragmentParams:
                 val byteP = $byteParams
                 val shortP = $shortParams

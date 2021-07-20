@@ -2,19 +2,20 @@ package zlc.season.bracerapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
 import zlc.season.bracer.start
+import zlc.season.bracerapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        button.setOnClickListener {
+        binding.button.setOnClickListener {
             ParamsActivity().apply { }.start(this)
         }
 
-        button2.setOnClickListener {
+        binding.button2.setOnClickListener {
             MutableParamsActivity().start(this)
         }
     }

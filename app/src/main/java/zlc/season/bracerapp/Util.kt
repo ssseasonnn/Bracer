@@ -1,5 +1,7 @@
 package zlc.season.bracerapp
 
+import java.io.Serializable
+
 val listParam = listOf("AAA", "BBB", "CCC")
 val arrayParam = arrayOf("AAA", "BBB", "CCC")
 val mapParam = mapOf(
@@ -12,13 +14,13 @@ data class CustomParams1(
     var a: String = "",
     var b: Int = 0,
     var c: Boolean = false
-) {
+) : Serializable {
     override fun toString(): String {
         return """{a=$a,b=$b,c=$c}"""
     }
 }
 
-class CustomParams2 {
+class CustomParams2 : Serializable {
     var str: String = ""
     var int: Int = 0
     var boolean: Boolean = false

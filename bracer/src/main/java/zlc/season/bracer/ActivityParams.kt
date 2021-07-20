@@ -8,7 +8,7 @@ import kotlin.reflect.KProperty
 
 internal val intentsMap = mutableMapOf<Activity, Intent>()
 
-@UseExperimental(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalStdlibApi::class)
 class ActivityParamsDelegate<T>(
     private val customKey: String = "",
     private val defaultValue: T? = null
@@ -18,7 +18,7 @@ class ActivityParamsDelegate<T>(
     }
 }
 
-@UseExperimental(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalStdlibApi::class)
 class ActivityMutableParamsDelegate<T>(
     private val customKey: String = "",
     private val defaultValue: T? = null

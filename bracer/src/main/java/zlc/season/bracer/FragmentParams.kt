@@ -6,7 +6,7 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-@UseExperimental(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalStdlibApi::class)
 class FragmentParamsDelegate<T>(
     private val customKey: String = "",
     private val defaultValue: T? = null
@@ -20,7 +20,7 @@ class FragmentParamsDelegate<T>(
     }
 }
 
-@UseExperimental(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalStdlibApi::class)
 class FragmentMutableParamsDelegate<T>(
     private val customKey: String = "",
     private val defaultValue: T? = null

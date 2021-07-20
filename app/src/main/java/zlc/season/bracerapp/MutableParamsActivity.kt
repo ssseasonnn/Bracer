@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.text.method.ScrollingMovementMethod
-import kotlinx.android.synthetic.main.activity_test.*
 import zlc.season.bracer.mutableParams
 import zlc.season.bracer.start
+import zlc.season.bracerapp.databinding.ActivityTestBinding
 import java.math.BigDecimal
 
 class MutableParamsActivity : AppCompatActivity() {
@@ -49,12 +49,13 @@ class MutableParamsActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_test)
+        val binding = ActivityTestBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         startFragmentByParams()
 
-        textView.movementMethod = ScrollingMovementMethod()
-        textView.text = """
+        binding.textView.movementMethod = ScrollingMovementMethod()
+        binding.textView.text = """
             ActivityParams:
                 var customKeyParams = $customKeyParams
                 var customParams = $customParams
@@ -89,10 +90,10 @@ class MutableParamsActivity : AppCompatActivity() {
         """.trimIndent()
 
 
-        btnNext.setOnClickListener {
+        binding.btnNext.setOnClickListener {
             startActivityByParams()
         }
-        btnDialog.setOnClickListener {
+        binding.btnDialog.setOnClickListener {
             showDialogByParams()
         }
     }

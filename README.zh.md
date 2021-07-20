@@ -260,6 +260,17 @@ var defaultParams by mutableParams<BigDecimal>(defaultValue = BigDecimal.ONE)
 
 ## 天辉获胜，GG
 
+混淆配置
+
+```kotlin
+-keepclassmembers @kotlin.Metadata class * {
+    <methods>;
+}
+//如果有自定义的参数类型也同样需要keep
+如：
+-keep class zlc.season.bracerapp.CustomParams1 { *; }
+```
+
 ### License
 
 > ```

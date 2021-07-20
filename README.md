@@ -260,6 +260,14 @@ var defaultParams by mutableParams<BigDecimal>(defaultValue = BigDecimal.ONE)
 
 ## Radiant wins, GG
 
+proguard
+
+```kotlin
+-keepclassmembers @kotlin.Metadata class * {
+    <methods>;
+}
+```
+
 ## License
 
 > ```

@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.4] - 2021-07-20
+### Added
+- Remove kotlin-android-extension
+
 ## [1.0.3] - 2020-01-13
 ### Added
 - Migrate to AndroidX

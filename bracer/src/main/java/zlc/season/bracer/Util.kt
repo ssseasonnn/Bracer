@@ -351,7 +351,7 @@ internal class Optional(
 @ExperimentalStdlibApi
 @Suppress("UNCHECKED_CAST")
 internal fun <T> Optional.get(customKey: String, kProperty: KProperty<*>, defaultValue: T?): T {
-    val key = if (customKey.isEmpty()) kProperty.name else customKey
+    val key = customKey.ifEmpty { kProperty.name }
     val result: Any = when (val kType = kProperty.returnType) {
         //basic type
         typeOf<Byte>() -> getByte(key, defaultValue.or { 0.toByte() })
@@ -443,7 +443,7 @@ internal fun <T> Optional.get(customKey: String, kProperty: KProperty<*>, defaul
 @ExperimentalStdlibApi
 @Suppress("UNCHECKED_CAST")
 internal fun <T> Optional.put(customKey: String, kProperty: KProperty<*>, value: T) {
-    val key = if (customKey.isEmpty()) kProperty.name else customKey
+    val key = customKey.ifEmpty { kProperty.name }
     when (val kType = kProperty.returnType) {
         //basic type
         typeOf<Byte>() -> putByte(key, value as Byte)

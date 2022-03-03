@@ -263,9 +263,9 @@ var defaultParams by mutableParams<BigDecimal>(defaultValue = BigDecimal.ONE)
 proguard
 
 ```kotlin
--keepclassmembers @kotlin.Metadata class * {
-    <methods>;
-}
+-dontwarn androidx.**
+-keep class androidx.** { *; }
+-keep interface androidx.** { *; }
 ```
 
 ## License

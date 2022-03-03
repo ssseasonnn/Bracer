@@ -21,6 +21,7 @@
 #-renamesourcefileattribute SourceFile
 
 -keep class * implements java.io.Serializable { *; }
--keepclassmembers @kotlin.Metadata class * {
-    <methods>;
-}
+
+-dontwarn androidx.**
+-keep class androidx.** { *; }
+-keep interface androidx.** { *; }

@@ -348,11 +348,9 @@ internal class Optional(
 }
 
 
-@ExperimentalStdlibApi
 @Suppress("UNCHECKED_CAST")
-internal fun <T> Optional.get(customKey: String, kProperty: KProperty<*>, defaultValue: T?): T {
-    val key = customKey.ifEmpty { kProperty.name }
-    val result: Any = when (val kType = kProperty.returnType) {
+internal fun <T> Optional.get(key: String, kType: KType, defaultValue: T?): T {
+    val result: Any = when (kType) {
         //basic type
         typeOf<Byte>() -> getByte(key, defaultValue.or { 0.toByte() })
         typeOf<Short>() -> getShort(key, defaultValue.or { 0.toShort() })
@@ -440,11 +438,9 @@ internal fun <T> Optional.get(customKey: String, kProperty: KProperty<*>, defaul
     return result as T
 }
 
-@ExperimentalStdlibApi
 @Suppress("UNCHECKED_CAST")
-internal fun <T> Optional.put(customKey: String, kProperty: KProperty<*>, value: T) {
-    val key = customKey.ifEmpty { kProperty.name }
-    when (val kType = kProperty.returnType) {
+internal fun <T> Optional.put(key: String, kType: KType, value: T) {
+    when (kType) {
         //basic type
         typeOf<Byte>() -> putByte(key, value as Byte)
         typeOf<Short>() -> putShort(key, value as Short)

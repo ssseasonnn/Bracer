@@ -5,38 +5,36 @@ import androidx.fragment.app.Fragment
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
+import kotlin.reflect.KType
 
-@OptIn(ExperimentalStdlibApi::class)
 class FragmentParamsDelegate<T>(
     private val customKey: String = "",
-    private val defaultValue: T? = null
+    private val defaultValue: T? = null,
+    private val type: KType
 ) : ReadOnlyProperty<Fragment, T> {
     override fun getValue(thisRef: Fragment, property: KProperty<*>): T {
-        return Optional(bundle = thisRef.arguments ?: Bundle()).get(
-            customKey,
-            property,
-            defaultValue
-        )
+        val key = customKey.ifEmpty { property.name }
+        return Optional(bundle = thisRef.arguments ?: Bundle())
+            .get(key, type, defaultValue)
     }
 }
 
-@OptIn(ExperimentalStdlibApi::class)
 class FragmentMutableParamsDelegate<T>(
     private val customKey: String = "",
-    private val defaultValue: T? = null
+    private val defaultValue: T? = null,
+    private val type: KType
 ) : ReadWriteProperty<Fragment, T> {
     override fun getValue(thisRef: Fragment, property: KProperty<*>): T {
-        return Optional(bundle = thisRef.arguments ?: Bundle()).get(
-            customKey,
-            property,
-            defaultValue
-        )
+        val key = customKey.ifEmpty { property.name }
+        return Optional(bundle = thisRef.arguments ?: Bundle())
+            .get(key, type, defaultValue)
     }
 
     override fun setValue(thisRef: Fragment, property: KProperty<*>, value: T) {
         val arguments = thisRef.arguments ?: Bundle().also {
             thisRef.arguments = it
         }
-        Optional(bundle = arguments).put(customKey, property, value)
+        val key = customKey.ifEmpty { property.name }
+        Optional(bundle = arguments).put(key, type, value)
     }
 }

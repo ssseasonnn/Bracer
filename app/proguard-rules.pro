@@ -21,7 +21,3 @@
 #-renamesourcefileattribute SourceFile
 
 -keep class * implements java.io.Serializable { *; }
-
--dontwarn androidx.**
--keep class androidx.** { *; }
--keep interface androidx.** { *; }

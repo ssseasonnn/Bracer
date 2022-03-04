@@ -3,8 +3,8 @@ package zlc.season.bracerapp
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.text.method.ScrollingMovementMethod
+import androidx.appcompat.app.AppCompatActivity
 import zlc.season.bracer.mutableParams
 import zlc.season.bracer.params
 import zlc.season.bracerapp.databinding.ActivityTestBinding

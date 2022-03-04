@@ -5,27 +5,30 @@ import android.content.Intent
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
+import kotlin.reflect.KType
 
 internal val intentsMap = mutableMapOf<Activity, Intent>()
 
-@OptIn(ExperimentalStdlibApi::class)
 class ActivityParamsDelegate<T>(
     private val customKey: String = "",
-    private val defaultValue: T? = null
+    private val defaultValue: T? = null,
+    private val type: KType
 ) : ReadOnlyProperty<Activity, T> {
     override fun getValue(thisRef: Activity, property: KProperty<*>): T {
-        return Optional(thisRef.intent).get(customKey, property, defaultValue)
+        val key = customKey.ifEmpty { property.name }
+        return Optional(thisRef.intent).get(key, type, defaultValue)
     }
 }
 
-@OptIn(ExperimentalStdlibApi::class)
 class ActivityMutableParamsDelegate<T>(
     private val customKey: String = "",
-    private val defaultValue: T? = null
+    private val defaultValue: T? = null,
+    private val type: KType
 ) : ReadWriteProperty<Activity, T> {
 
     override fun getValue(thisRef: Activity, property: KProperty<*>): T {
-        return Optional(thisRef.intent).get(customKey, property, defaultValue)
+        val key = customKey.ifEmpty { property.name }
+        return Optional(thisRef.intent).get(key, type, defaultValue)
     }
 
     override fun setValue(thisRef: Activity, property: KProperty<*>, value: T) {
@@ -35,6 +38,7 @@ class ActivityMutableParamsDelegate<T>(
             intentsMap[thisRef] = intent
         }
 
-        Optional(intent).put(customKey, property, value)
+        val key = customKey.ifEmpty { property.name }
+        Optional(intent).put(key, type, value)
     }
 }

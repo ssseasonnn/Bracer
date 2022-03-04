@@ -24,7 +24,7 @@ allprojects {
 
 ```gradle
 dependencies {
-	implementation 'com.github.ssseasonnn:Bracer:1.0.3'
+	implementation 'com.github.ssseasonnn:Bracer:1.0.5'
 }
 ```
 
@@ -263,9 +263,8 @@ var defaultParams by mutableParams<BigDecimal>(defaultValue = BigDecimal.ONE)
 proguard
 
 ```kotlin
--dontwarn androidx.**
--keep class androidx.** { *; }
--keep interface androidx.** { *; }
+//just keep your custom data
+-keep class zlc.season.bracerapp.CustomParams1 { *; }
 ```
 
 ## License

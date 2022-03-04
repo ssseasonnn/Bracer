@@ -24,7 +24,7 @@ allprojects {
 
 ```gradle
 dependencies {
-	implementation 'com.github.ssseasonnn:Bracer:1.0.3'
+	implementation 'com.github.ssseasonnn:Bracer:1.0.5'
 }
 ```
 
@@ -263,12 +263,7 @@ var defaultParams by mutableParams<BigDecimal>(defaultValue = BigDecimal.ONE)
 混淆配置
 
 ```kotlin
--dontwarn androidx.**
--keep class androidx.** { *; }
--keep interface androidx.** { *; }
-
-//如果有自定义的参数类型也同样需要keep
-如：
+//只需要keep自定义的参数类型
 -keep class zlc.season.bracerapp.CustomParams1 { *; }
 ```
 

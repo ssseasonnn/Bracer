@@ -66,7 +66,7 @@ binding.button.setOnClickListener {
     }
 }
 
-or using traditional way：
+//or using tradition way：
 val intent = Intent(context, DemoActivity::class.java)
 intent.putExtra("intParam", 1.toByte())
 intent.putExtra("booleanParam", true)
@@ -74,7 +74,7 @@ intent.putExtra("stringParam", "abc")
 startActivity(intent)
 ```
 
-> No need to worry, Brace can be integrated with any third-party router, just ensure that the parameter name is the correspond
+> No need to worry, Bracer can be integrated with any third-party router, just ensure that the parameter name is the correspond
 
 ### 2. For Fragment
 
@@ -116,8 +116,7 @@ class DemoViewModel(private val stateHandle: SavedStateHandle) : ViewModel() {
     private val customParam by stateHandle.params<CustomParams1>()
 }
 
-create ViewModel:
-
+//create ViewModel
 class DemoActivity : AppCompatActivity() {
     var intParam by mutableParams<Int>()
     var booleanParam by mutableParams<Boolean>()

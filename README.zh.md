@@ -66,7 +66,7 @@ binding.button.setOnClickListener {
     }
 }
 
-或者使用传统方式：
+//或者使用传统方式
 val intent = Intent(context, DemoActivity::class.java)
 intent.putExtra("intParam", 1.toByte())
 intent.putExtra("booleanParam", true)
@@ -118,8 +118,7 @@ class DemoViewModel(private val stateHandle: SavedStateHandle) : ViewModel() {
     private val customParam by stateHandle.params<CustomParams1>()
 }
 
-创建ViewModel:
-
+//创建ViewModel
 class DemoActivity : AppCompatActivity() {
     //定义参数
     var intParam by mutableParams<Int>()

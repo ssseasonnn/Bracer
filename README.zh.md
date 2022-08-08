@@ -4,13 +4,15 @@
 
 # Bracer
 
-在各个Activity或者各个Fragment之间安全快速的传递参数
+一个让你在Activity或Fragment之间优雅传递和解析参数的工具
 
 *Read this in other languages: [中文](README.zh.md), [English](README.md), [Change Log](CHANGELOG.md)*
 
+![](usage.png)
+
 ## Prepare
 
-1. Add the JitPack repository to your build file
+### 1. Add the JitPack repository to your build file
 ```gradle
 allprojects {
     repositories {
@@ -20,229 +22,129 @@ allprojects {
 }
 ```
 
-2. Add the dependency
+### 2. Add the dependency
 
 ```gradle
 dependencies {
-	implementation 'com.github.ssseasonnn:Bracer:1.0.5'
+	implementation 'com.github.ssseasonnn:Bracer:1.0.6'
 }
 ```
 
-## First Blood
+## Usage
 
-亲，都2020年了，还在写这样的代码吗？
-
-```kotlin
-val param1 = intent.getStringExtra("param1")
-//param1 可能为空，所以我们要判空
-if (param1 != null) {
-    //using param1
-}
-```
-或者
+### 1. 在Activity中使用
 
 ```kotlin
-class ActivityB : AppCompatActivity() {
-    private fun gotoActivityA() {
-        val intent = Intent(this, ActivityA::class.java)
-        intent.putExtra("key_1", "123")
-        startActivity(intent)
-    }
-}
-
-class ActivityA : AppCompatActivity() {
-    
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        //oh shit, wtf!! 写错了key的名字，导致一直获取不到值
-        val valueA = intent.getStringExtra("key_l")
-        
-    }
-}
-```
-
-更有甚者：
-
-```kotlin
-//Oh my god! 每个Fragment都要这么写一遍吗？
-class FragmentA : Fragment() {
-    var a: String = ""
-    var b: String = ""
-
-    companion object {
-        fun newFragment(a: String, b: String): FragmentA {
-            val fragmentA = FragmentA()
-            val bundle = Bundle()
-            bundle.putString("key_a", a)
-            bundle.putString("key_b", b)
-            fragmentA.arguments = bundle
-            return fragmentA
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            a = it.getString("key_a") ?: ""
-            b = it.getString("key_b") ?: ""
-        }
-    }
-}
-```
-
-我只是想简单传个参数，为什么要让我写这么多代码？？？我好累...
-
-别怕，现在有了**Bracer!!**
-
-
-## Double kill
-
-来看看新世纪应该如何正确传递参数吧
-
-在Fragment中获取参数：
-
-```kotlin
-class MutableParamsFragment : Fragment() {
-    //基本类型
-    var intParams by mutableParams<Int>()
-    var booleanParams by mutableParams<Boolean>()
-    var stringParams by mutableParams<String>()
-
-    //自定义类型
-    var customParams by mutableParams<CustomParams1>()
-
-    //list
-    var intListParams by mutableParams<ArrayList<Int>>()
-    var stringListParams by mutableParams<ArrayList<String>>()
-    
-    //array
-    var intArrayParams by mutableParams<IntArray>()
-    var arrayCustomParams by mutableParams<Array<CustomParams1>>()
-
-    //其他任意类型
-    //...
+class DemoActivity : AppCompatActivity() {
+    //定义参数
+    var intParam by mutableParams<Int>()
+    var booleanParam by mutableParams<Boolean>()
+    var stringParam by mutableParams<String>()
+    var customParam by mutableParams<CustomParams1>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //直接使用,不需要再手动从Arguments中读取了
+        //使用参数
         println(intParams)
         println(booleanParams)
         println(stringParams)
         println(customParams)
-        println(intListParams)
-        println(stringListParams)
-        println(intArrayParams)
-
     }
 }
 ```
 
-如你所见，从Fragment里获取参数就是这么简单，并且非常安全！！
-
-并且支持几乎所有的类型！
-
-你不会再遇到空指针null，所有的参数都会有默认值；
-不会遇到key写错的情况，所有的参数默认都以自身的名字作为key.
-
-> 等同于： 
-> val byteParams = arguments.getByte("byteParams", 0)
-> var stringParams = arguments.getString("stringParams") ?: ""
-
-接下来我们来见识一下如何传递参数：
+传递参数给Activity：
 
 ```kotlin
-val fragment = MutableParamsFragment().apply {
-    intParams = 1  //赋值即可
-    booleanParams = true
-    stringParams = "123"
-
-    customParams = CustomParams1()
-    intListParams = arrayListOf(1,2,3)
-
-    intArrayParams = IntArray(2) { it }
+binding.button.setOnClickListener {
+    startActivity<DemoActivity> {
+        intParam = 1
+        booleanParam = true
+        stringParam = "abc"
+        customParam = CustomParams1()
+    }
 }
 
-//show this Fragment
-val beginTransaction = supportFragmentManager.beginTransaction()
-beginTransaction.add(R.id.frameLayout, fragment, "")
-beginTransaction.commit()
-
+或者使用传统方式：
+val intent = Intent(context, DemoActivity::class.java)
+intent.putExtra("intParam", 1.toByte())
+intent.putExtra("booleanParam", true)
+intent.putExtra("stringParam", "abc")
+startActivity(intent)
 ```
 
-Amazing!! 是的就是这么神奇，传递参数就是这么简单！
+> 无需担心，Bracer可以和任何三方Router集成，只需要保证参数名称和Intent中的key是对应的即可
 
-## Double Kill
+### 2. 在Fragment中使用
 
-接下来看一下Activity的情况吧
+同样的，在Fragment中使用也很简单
 
 ```kotlin
-class MutableParamsActivity : AppCompatActivity() {
-    //基本类型
-    var intParams by mutableParams<Int>()
-    var booleanParams by mutableParams<Boolean>()
-    var stringParams by mutableParams<String>()
+class DemoFragment : Fragment() {
+    var intParam by mutableParams<Int>()
+    var booleanParam by mutableParams<Boolean>()
+    var stringParam by mutableParams<String>()
+    var customParam by mutableParams<CustomParams1>()
+}
+```
 
-    //自定义类型
-    var customParams by mutableParams<CustomParams1>()
+传递参数给Fragment
 
-    //list
-    var intListParams by mutableParams<ArrayList<Int>>()
-    var stringListParams by mutableParams<ArrayList<String>>()
-    
-    //array
-    var intArrayParams by mutableParams<IntArray>()
-    var arrayCustomParams by mutableParams<Array<CustomParams1>>()
+```kotlin
+val fragment = DemoFragment().apply {
+        intParam = 1
+        booleanParam = true
+        stringParam = "abc"
+        customParam = CustomParams1()
+}
 
-    //其他任意类型
-    //...
+supportFragmentManager.beginTransaction().apply {
+        add(R.id.frameLayout, fragment)
+        commit()
+    }
+```
+
+### 3. 在ViewModel中获取Activity或者Fragment中的参数
+
+有时候，会遇到在ViewModel中需要获取Activity或者Fragment参数的情景
+
+```kotlin
+//使用SavedStateHandle
+class DemoViewModel(private val stateHandle: SavedStateHandle) : ViewModel() {
+    private val intParam by stateHandle.params<Int>()
+    private val booleanParam by stateHandle.params<Boolean>()
+    private val stringParam by stateHandle.params<String>()
+    private val customParam by stateHandle.params<CustomParams1>()
+}
+
+创建ViewModel:
+
+class DemoActivity : AppCompatActivity() {
+    //定义参数
+    var intParam by mutableParams<Int>()
+    var booleanParam by mutableParams<Boolean>()
+    var stringParam by mutableParams<String>()
+    var customParam by mutableParams<CustomParams1>()
+
+    //通过viewModels扩展创建ViewModel
+    val viewModel by viewModels<DemoViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_test)
 
-        //直接使用,不需要再手动从Intent中读取了
+        //使用参数
         println(intParams)
         println(booleanParams)
         println(stringParams)
         println(customParams)
-        println(intListParams)
-        println(stringListParams)
-        println(intArrayParams)
-
     }
 }
 ```
 
-和Fragment类似，从Activity里获取参数依然这么简单，并且依旧非常安全！！
-你不会再遇到空指针null，所有的参数都会有默认值；
-不会遇到key写错的情况，所有的参数默认都以自身的名字作为key.
+> 要使用viewModels扩展，需要添加依赖：implementation 'androidx.fragment:fragment-ktx:1.5.1'
 
-> 等同于： 
-> val byteParams = intent.getByteExtra("byteParams", 0)
-> var stringParams = intent.getStringExtra("stringParams") ?: ""
-
-接下来我们来见识一下如何传递参数：
-
-```kotlin
-MutableParamsActivity().apply {
-    intParams = 1  //赋值即可
-    booleanParams = true
-    stringParams = "123"
-
-    customParams = CustomParams1()
-    intListParams = arrayListOf(1,2,3)
-
-    intArrayParams = IntArray(2) { it }
-}.start(context)
-```
-
-？？？确认你没写错？为什么能new一个Activity？？？
-
-是的，就是这么神奇，和Fragment的用法几乎一致，只是略微做了点骚操作！
-
-
-## Triple Kill
+### 4. 其他特性
 
 除此之外，Bracer还支持一些其他特性.
 
@@ -258,16 +160,8 @@ var customKeyParams by mutableParams<Byte>("this is custom key")
 var defaultParams by mutableParams<BigDecimal>(defaultValue = BigDecimal.ONE)
 ```
 
-## 天辉获胜，GG
 
-混淆配置
-
-```kotlin
-//只需要keep自定义的参数类型
--keep class zlc.season.bracerapp.CustomParams1 { *; }
-```
-
-### License
+## License
 
 > ```
 > Copyright 2019 Season.Zlc

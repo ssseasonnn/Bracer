@@ -4,13 +4,15 @@
 
 # Bracer
 
-Pass parameters safely and quickly between activities or fragments.
+Pass parameters between Activity or Fragment like a master.
 
 *Read this in other languages: [中文](README.zh.md), [English](README.md), [Change Log](CHANGELOG.md)*
 
+![](usage.png)
+
 ## Prepare
 
-1. Add the JitPack repository to your build file
+### 1. Add the JitPack repository to your build file
 ```gradle
 allprojects {
     repositories {
@@ -20,252 +22,138 @@ allprojects {
 }
 ```
 
-2. Add the dependency
+### 2. Add the dependency
 
 ```gradle
 dependencies {
-	implementation 'com.github.ssseasonnn:Bracer:1.0.5'
+	implementation 'com.github.ssseasonnn:Bracer:1.0.6'
 }
 ```
 
-## First Blood
+## Usage
 
-Dear, it's all 2020. Are you still writing such code?
-
-```kotlin
-val param1 = intent.getStringExtra("param1")
-//param1 may be null, so we have to determine null
-if (param1 != null) {
-    //using param1
-}
-```
-Or:
+### 1. For Activity
 
 ```kotlin
-class ActivityB : AppCompatActivity() {
-    private fun gotoActivityA() {
-        val intent = Intent(this, ActivityA::class.java)
-        intent.putExtra("key_1", "123")
-        startActivity(intent)
-    }
-}
-
-class ActivityA : AppCompatActivity() {
-    
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        //oh shit, wtf!! 写错了key的名字，导致一直获取不到值
-        val valueA = intent.getStringExtra("key_l")
-        
-    }
-}
-```
-
-more than this:
-
-```kotlin
-//Oh my god! Does every Fragment need to be written like this?
-class FragmentA : Fragment() {
-    var a: String = ""
-    var b: String = ""
-
-    companion object {
-        fun newFragment(a: String, b: String): FragmentA {
-            val fragmentA = FragmentA()
-            val bundle = Bundle()
-            bundle.putString("key_a", a)
-            bundle.putString("key_b", b)
-            fragmentA.arguments = bundle
-            return fragmentA
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            a = it.getString("key_a") ?: ""
-            b = it.getString("key_b") ?: ""
-        }
-    }
-}
-```
-
-I just want to simply pass a parameter, why should I write so much code? ? ? I am so tired...
-
-Don't be afraid, now you have ** Bracer !! **
-
-
-## Double kill
-
-Let's see how the new century should pass parameters correctly
-
-Get parameters in Fragment:
-
-```kotlin
-class MutableParamsFragment : Fragment() {
-    //basic type
-    var intParams by mutableParams<Int>()
-    var booleanParams by mutableParams<Boolean>()
-    var stringParams by mutableParams<String>()
-
-    //Custom type
-    var customParams by mutableParams<CustomParams1>()
-
-    //list
-    var intListParams by mutableParams<ArrayList<Int>>()
-    var stringListParams by mutableParams<ArrayList<String>>()
-    
-    //array
-    var intArrayParams by mutableParams<IntArray>()
-    var arrayCustomParams by mutableParams<Array<CustomParams1>>()
-
-    //Any other type
-    //...
+class DemoActivity : AppCompatActivity() {
+    //define
+    var intParam by mutableParams<Int>()
+    var booleanParam by mutableParams<Boolean>()
+    var stringParam by mutableParams<String>()
+    var customParam by mutableParams<CustomParams1>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //Use directly, no need to manually read from Arguments
+        //use
         println(intParams)
         println(booleanParams)
         println(stringParams)
         println(customParams)
-        println(intListParams)
-        println(stringListParams)
-        println(intArrayParams)
-
     }
 }
 ```
 
-As you can see, getting parameters from Fragment is so simple and very safe! !!
-
-And supports almost all types!
-
-You will no longer encounter null pointer null, all parameters will have default values;
-You won't encounter wrong key writing. All parameters use their own names as keys by default.
-
-> Equivalent to:
-> val byteParams = arguments.getByte("byteParams", 0)
-> var stringParams = arguments.getString("stringParams") ?: ""
-
-Let's see how to pass parameters:
+pass parameter to Activity：
 
 ```kotlin
-val fragment = MutableParamsFragment().apply {
-    intParams = 1  //Just assign
-    booleanParams = true
-    stringParams = "123"
-
-    customParams = CustomParams1()
-    intListParams = arrayListOf(1,2,3)
-
-    intArrayParams = IntArray(2) { it }
+binding.button.setOnClickListener {
+    startActivity<DemoActivity> {
+        intParam = 1
+        booleanParam = true
+        stringParam = "abc"
+        customParam = CustomParams1()
+    }
 }
 
-//show this Fragment
-val beginTransaction = supportFragmentManager.beginTransaction()
-beginTransaction.add(R.id.frameLayout, fragment, "")
-beginTransaction.commit()
-
+or using traditional way：
+val intent = Intent(context, DemoActivity::class.java)
+intent.putExtra("intParam", 1.toByte())
+intent.putExtra("booleanParam", true)
+intent.putExtra("stringParam", "abc")
+startActivity(intent)
 ```
 
-Amazing!! Yes, it is so magical, passing parameters is as simple as that!
+> No need to worry, Brace can be integrated with any third-party router, just ensure that the parameter name is the correspond
 
-## Double Kill
+### 2. For Fragment
 
-Let ’s take a look at Activity
+As Same
 
 ```kotlin
-class MutableParamsActivity : AppCompatActivity() {
-    //basic type
-    var intParams by mutableParams<Int>()
-    var booleanParams by mutableParams<Boolean>()
-    var stringParams by mutableParams<String>()
+class DemoFragment : Fragment() {
+    var intParam by mutableParams<Int>()
+    var booleanParam by mutableParams<Boolean>()
+    var stringParam by mutableParams<String>()
+    var customParam by mutableParams<CustomParams1>()
+}
+```
 
-    //Custom type
-    var customParams by mutableParams<CustomParams1>()
+pass parameter to Fragment
 
-    //list
-    var intListParams by mutableParams<ArrayList<Int>>()
-    var stringListParams by mutableParams<ArrayList<String>>()
-    
-    //array
-    var intArrayParams by mutableParams<IntArray>()
-    var arrayCustomParams by mutableParams<Array<CustomParams1>>()
+```kotlin
+val fragment = DemoFragment().apply {
+        intParam = 1
+        booleanParam = true
+        stringParam = "abc"
+        customParam = CustomParams1()
+}
 
-    //Any other type
-    //...
+supportFragmentManager.beginTransaction().apply {
+        add(R.id.frameLayout, fragment)
+        commit()
+    }
+```
+
+### 3. Get parameters in ViewModel
+
+```kotlin
+//using SavedStateHandle
+class DemoViewModel(private val stateHandle: SavedStateHandle) : ViewModel() {
+    private val intParam by stateHandle.params<Int>()
+    private val booleanParam by stateHandle.params<Boolean>()
+    private val stringParam by stateHandle.params<String>()
+    private val customParam by stateHandle.params<CustomParams1>()
+}
+
+create ViewModel:
+
+class DemoActivity : AppCompatActivity() {
+    var intParam by mutableParams<Int>()
+    var booleanParam by mutableParams<Boolean>()
+    var stringParam by mutableParams<String>()
+    var customParam by mutableParams<CustomParams1>()
+
+    //create ViewModel by viewModels extend function
+    val viewModel by viewModels<DemoViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_test)
 
-        //Use it directly, no need to manually read from Intent anymore
         println(intParams)
         println(booleanParams)
         println(stringParams)
         println(customParams)
-        println(intListParams)
-        println(stringListParams)
-        println(intArrayParams)
-
     }
 }
 ```
 
-Similar to Fragment, getting parameters from Activity is still so simple and still very safe! !!
-You will no longer encounter null pointer null, all parameters will have default values;
-You won't encounter wrong key writing. All parameters use their own names as keys by default.
+> To use with viewModels extension function, you need to add dependencies：implementation 'androidx.fragment:fragment-ktx:1.5.1'
 
-> Equivalent to:
-> val byteParams = intent.getByteExtra("byteParams", 0)
-> var stringParams = intent.getStringExtra("stringParams") ?: ""
+### 4. Other Features
 
-Let's see how to pass parameters:
-
-```kotlin
-MutableParamsActivity().apply {
-    intParams = 1  //Just assign
-    booleanParams = true
-    stringParams = "123"
-
-    customParams = CustomParams1()
-    intListParams = arrayListOf(1,2,3)
-
-    intArrayParams = IntArray(2) { it }
-}.start(context)
-```
-
-? ? ? Are you sure you wrote correctly? Why can we create an Activity? ? ?
-
-Yes, it ’s so amazing, it is almost the same as Fragment usage, just a little bit of a show!
-
-
-## Triple Kill
-
-In addition, Bracer also supports some other features.
-
-For example a custom key:
+Custom key：
 
 ```kotlin
 var customKeyParams by mutableParams<Byte>("this is custom key")
 ```
 
-Or support custom defaults:
+Default value：
 
 ```kotlin
 var defaultParams by mutableParams<BigDecimal>(defaultValue = BigDecimal.ONE)
 ```
 
-## Radiant wins, GG
-
-proguard
-
-```kotlin
-//just keep your custom data
--keep class zlc.season.bracerapp.CustomParams1 { *; }
-```
 
 ## License
 

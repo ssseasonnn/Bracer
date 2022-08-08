@@ -9,7 +9,6 @@ import android.util.Size
 import android.util.SizeF
 import com.google.gson.Gson
 import java.io.Serializable
-import kotlin.reflect.KProperty
 import kotlin.reflect.KType
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.isSubtypeOf
@@ -26,8 +25,14 @@ internal fun log(any: Any) {
 
 internal val gson by lazy { Gson() }
 
+private fun KType.createObj() = try {
+    jvmErasure.createInstance()
+} catch (e: Throwable) {
+    gson.fromJson("{}", jvmErasure.java)
+}
+
 @Suppress("UNCHECKED_CAST")
-internal fun <T> KType.getDefaultValue(): T {
+internal fun <T> KType.defaultValue(): T {
     val result: Any = when (this) {
         //basic type
         typeOf<Byte>() -> 0.toByte()
@@ -83,20 +88,8 @@ internal fun <T> KType.getDefaultValue(): T {
                         }
                     }
                 }
-                isSubtypeOf(typeOf<Parcelable>()) -> {
-                    try {
-                        jvmErasure.createInstance()
-                    } catch (e: Throwable) {
-                        gson.fromJson("{}", jvmErasure.java)
-                    }
-                }
-                isSubtypeOf(typeOf<Serializable>()) -> {
-                    try {
-                        jvmErasure.createInstance()
-                    } catch (e: Throwable) {
-                        gson.fromJson("{}", jvmErasure.java)
-                    }
-                }
+                isSubtypeOf(typeOf<Parcelable>()) -> createObj()
+                isSubtypeOf(typeOf<Serializable>()) -> createObj()
                 else -> {
                     gson.fromJson("{}", jvmErasure.java)
                 }
@@ -165,22 +158,10 @@ internal fun <T> Optional.get(key: String, kType: KType, defaultValue: T?): T {
                     }
                 }
                 kType.isSubtypeOf(typeOf<Parcelable>()) -> {
-                    getParcelable(key, defaultValue.or {
-                        try {
-                            kType.jvmErasure.createInstance()
-                        } catch (e: Throwable) {
-                            gson.fromJson("{}", kType.jvmErasure.java)
-                        }
-                    })
+                    getParcelable(key, defaultValue.or { kType.createObj() })
                 }
                 kType.isSubtypeOf(typeOf<Serializable>()) -> {
-                    getSerializable(key, defaultValue.or {
-                        try {
-                            kType.jvmErasure.createInstance()
-                        } catch (e: Throwable) {
-                            gson.fromJson("{}", kType.jvmErasure.java)
-                        }
-                    })
+                    getSerializable(key, defaultValue.or { kType.createObj() })
                 }
                 else -> {
                     getJsonValue(key, defaultValue, kType, "{}")
@@ -193,9 +174,6 @@ internal fun <T> Optional.get(key: String, kType: KType, defaultValue: T?): T {
 
 @Suppress("UNCHECKED_CAST")
 internal fun <T> Optional.put(key: String, kType: KType, value: T) {
-    if (value is Boolean){
-
-    }
     when (kType) {
         //basic type
         typeOf<Byte>() -> putByte(key, value as Byte)
@@ -265,7 +243,7 @@ internal fun <T> Optional.put(key: String, kType: KType, value: T) {
     }
 }
 
-internal fun bundleOf(vararg pairs: Pair<String, Any?>): Bundle = Bundle(pairs.size).apply {
+fun createBundleOf(vararg pairs: Pair<String, Any?>): Bundle = Bundle(pairs.size).apply {
     for ((key, value) in pairs) {
         when (value) {
             null -> putString(key, null) // Any nullable type will suffice.

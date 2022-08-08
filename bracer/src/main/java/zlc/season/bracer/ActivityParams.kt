@@ -1,13 +1,10 @@
 package zlc.season.bracer
 
 import android.app.Activity
-import android.content.Intent
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.KType
-
-internal val intentsMap = mutableMapOf<Activity, Intent>()
 
 class ActivityParamsDelegate<T>(
     private val activity: Activity,
@@ -33,12 +30,7 @@ class ActivityMutableParamsDelegate<T>(
     }
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
-        var intent = intentsMap[thisRef]
-        if (intent == null) {
-            intent = Intent()
-            intentsMap[activity] = intent
-        }
-
+        val intent = ActivityIntentHolder.createIntent(activity)
         val key = customKey.ifEmpty { property.name }
         Optional(intent).put(key, type, value)
     }

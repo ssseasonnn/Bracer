@@ -14,7 +14,7 @@ class StateHandleParamsDelegate<T>(
 ) : ReadOnlyProperty<Any, T> {
     override fun getValue(thisRef: Any, property: KProperty<*>): T {
         val key = customKey.ifEmpty { property.name }
-        return savedStateHandle.get(key) ?: (defaultValue ?: type.getDefaultValue())
+        return savedStateHandle.get(key) ?: (defaultValue ?: type.defaultValue())
     }
 }
 
@@ -26,7 +26,7 @@ class StateHandleMutableParamsDelegate<T>(
 ) : ReadWriteProperty<Any, T> {
     override fun getValue(thisRef: Any, property: KProperty<*>): T {
         val key = customKey.ifEmpty { property.name }
-        return savedStateHandle.get(key) ?: (defaultValue ?: type.getDefaultValue())
+        return savedStateHandle.get(key) ?: (defaultValue ?: type.defaultValue())
     }
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {

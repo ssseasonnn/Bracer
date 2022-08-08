@@ -1,10 +1,14 @@
 package zlc.season.bracer
 
-import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import android.os.Parcelable
+import android.util.Log
+import android.util.Size
+import android.util.SizeF
+import com.google.gson.Gson
 import java.io.Serializable
-import java.util.*
 import kotlin.reflect.KProperty
 import kotlin.reflect.KType
 import kotlin.reflect.full.createInstance
@@ -12,339 +16,94 @@ import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.typeOf
 
-internal class Optional(
-    private val intent: Intent? = null,
-    private val bundle: Bundle = Bundle()
-) {
-    //Get methods
-    fun getByte(key: String, value: Byte): Byte {
-        return intent?.getByteExtra(key, value) ?: bundle.getByte(key, value)
-    }
+internal inline fun <P, reified R> P?.or(defaultValue: () -> R): R {
+    return this as? R ?: defaultValue()
+}
 
-    fun getShort(key: String, value: Short): Short {
-        return intent?.getShortExtra(key, value) ?: bundle.getShort(key, value)
-    }
+internal fun log(any: Any) {
+    Log.d("Bracer", any.toString())
+}
 
-    fun getInt(key: String, value: Int): Int {
-        return intent?.getIntExtra(key, value) ?: bundle.getInt(key, value)
-    }
+internal val gson by lazy { Gson() }
 
-    fun getFloat(key: String, value: Float): Float {
-        return intent?.getFloatExtra(key, value) ?: bundle.getFloat(key, value)
-    }
+@Suppress("UNCHECKED_CAST")
+internal fun <T> KType.getDefaultValue(): T {
+    val result: Any = when (this) {
+        //basic type
+        typeOf<Byte>() -> 0.toByte()
+        typeOf<Short>() -> 0.toShort()
+        typeOf<Int>() -> 0
+        typeOf<Float>() -> 0f
+        typeOf<Double>() -> 0.0
+        typeOf<Long>() -> 0L
+        typeOf<Boolean>() -> false
+        typeOf<Char>() -> '0'
+        typeOf<CharSequence>() -> ""
+        typeOf<String>() -> ""
 
-    fun getDouble(key: String, value: Double): Double {
-        return intent?.getDoubleExtra(key, value) ?: bundle.getDouble(key, value)
-    }
+        //array type
+        typeOf<ByteArray>() -> ByteArray(0)
+        typeOf<ShortArray>() -> ShortArray(0)
+        typeOf<IntArray>() -> IntArray(0)
+        typeOf<FloatArray>() -> FloatArray(0)
+        typeOf<DoubleArray>() -> DoubleArray(0)
+        typeOf<LongArray>() -> LongArray(0)
+        typeOf<BooleanArray>() -> BooleanArray(0)
+        typeOf<CharArray>() -> CharArray(0)
+        typeOf<Array<CharSequence>>() -> emptyArray<CharSequence>()
+        typeOf<Array<String>>() -> emptyArray<String>()
 
-    fun getLong(key: String, value: Long): Long {
-        return intent?.getLongExtra(key, value) ?: bundle.getLong(key, value)
-    }
+        //custom type
+        typeOf<Bundle>() -> Bundle()
 
-    fun getBoolean(key: String, value: Boolean): Boolean {
-        return intent?.getBooleanExtra(key, value) ?: bundle.getBoolean(key, value)
-    }
-
-    fun getChar(key: String, value: Char): Char {
-        return intent?.getCharExtra(key, value) ?: bundle.getChar(key, value)
-    }
-
-    fun getCharSequence(key: String, value: CharSequence): CharSequence {
-        return if (intent != null) {
-            intent.getCharSequenceExtra(key) ?: value
-        } else {
-            bundle.getCharSequence(key) ?: value
-        }
-    }
-
-    fun getString(key: String, value: String): String {
-        return if (intent != null) {
-            intent.getStringExtra(key) ?: value
-        } else {
-            bundle.getString(key) ?: value
-        }
-    }
-
-    fun getByteArray(key: String, value: ByteArray): ByteArray {
-        return if (intent != null) {
-            intent.getByteArrayExtra(key) ?: value
-        } else {
-            bundle.getByteArray(key) ?: value
-        }
-    }
-
-    fun getShortArray(key: String, value: ShortArray): ShortArray {
-        return if (intent != null) {
-            intent.getShortArrayExtra(key) ?: value
-        } else {
-            bundle.getShortArray(key) ?: value
-        }
-    }
-
-    fun getIntArray(key: String, value: IntArray): IntArray {
-        return if (intent != null) {
-            intent.getIntArrayExtra(key) ?: value
-        } else {
-            bundle.getIntArray(key) ?: value
-        }
-    }
-
-    fun getFloatArray(key: String, value: FloatArray): FloatArray {
-        return if (intent != null) {
-            intent.getFloatArrayExtra(key) ?: value
-        } else {
-            bundle.getFloatArray(key) ?: value
-        }
-    }
-
-    fun getDoubleArray(key: String, value: DoubleArray): DoubleArray {
-        return if (intent != null) {
-            intent.getDoubleArrayExtra(key) ?: value
-        } else {
-            bundle.getDoubleArray(key) ?: value
-        }
-    }
-
-    fun getLongArray(key: String, value: LongArray): LongArray {
-        return if (intent != null) {
-            intent.getLongArrayExtra(key) ?: value
-        } else {
-            bundle.getLongArray(key) ?: value
-        }
-    }
-
-    fun getBooleanArray(key: String, value: BooleanArray): BooleanArray {
-        return if (intent != null) {
-            intent.getBooleanArrayExtra(key) ?: value
-        } else {
-            bundle.getBooleanArray(key) ?: value
-        }
-    }
-
-    fun getCharArray(key: String, value: CharArray): CharArray {
-        return if (intent != null) {
-            intent.getCharArrayExtra(key) ?: value
-        } else {
-            bundle.getCharArray(key) ?: value
-        }
-    }
-
-    fun getCharSequenceArray(key: String, value: Array<CharSequence>): Array<CharSequence> {
-        return if (intent != null) {
-            intent.getCharSequenceArrayExtra(key) ?: value
-        } else {
-            bundle.getCharSequenceArray(key) ?: value
-        }
-    }
-
-    fun getStringArray(key: String, value: Array<String>): Array<String> {
-        return if (intent != null) {
-            intent.getStringArrayExtra(key) ?: value
-        } else {
-            bundle.getStringArray(key) ?: value
-        }
-    }
-
-    fun getBundle(key: String, value: Bundle): Bundle {
-        return if (intent != null) {
-            intent.getBundleExtra(key) ?: value
-        } else {
-            bundle.getBundle(key) ?: value
-        }
-    }
-
-    fun getJsonValue(
-        key: String,
-        defaultValue: Any?,
-        kType: KType,
-        emptyJson: String
-    ): Any {
-        if (intent != null) {
-            val serializeString = intent.getStringExtra(key)
-            return if (serializeString.isNullOrEmpty()) {
-                defaultValue.or {
-                    gson.fromJson(emptyJson, kType.jvmErasure.java)
+        else -> {
+            when {
+                /**
+                 * Must check array and list first!!
+                 */
+                isSubtypeOf(typeOf<Array<*>>()) -> {
+                    gson.fromJson("[]", jvmErasure.java)
                 }
-            } else {
-                gson.fromJson(serializeString, kType.jvmErasure.java)
-            }
-        } else {
-            val serializeString = bundle.getString(key)
-            return if (serializeString.isNullOrEmpty()) {
-                defaultValue.or {
-                    gson.fromJson(emptyJson, kType.jvmErasure.java)
+                isSubtypeOf(typeOf<List<*>>()) -> {
+                    when {
+                        isSubtypeOf(typeOf<ArrayList<String>>()) -> {
+                            arrayListOf<String>()
+                        }
+                        isSubtypeOf(typeOf<ArrayList<CharSequence>>()) -> {
+                            arrayListOf<CharSequence>()
+                        }
+                        isSubtypeOf(typeOf<ArrayList<Int>>()) -> {
+                            arrayListOf<Int>()
+                        }
+                        isSubtypeOf(typeOf<ArrayList<Parcelable>>()) -> {
+                            arrayListOf<Parcelable>()
+                        }
+                        else -> {
+                            gson.fromJson("[]", jvmErasure.java)
+                        }
+                    }
                 }
-            } else {
-                gson.fromJson(serializeString, kType.jvmErasure.java)
+                isSubtypeOf(typeOf<Parcelable>()) -> {
+                    try {
+                        jvmErasure.createInstance()
+                    } catch (e: Throwable) {
+                        gson.fromJson("{}", jvmErasure.java)
+                    }
+                }
+                isSubtypeOf(typeOf<Serializable>()) -> {
+                    try {
+                        jvmErasure.createInstance()
+                    } catch (e: Throwable) {
+                        gson.fromJson("{}", jvmErasure.java)
+                    }
+                }
+                else -> {
+                    gson.fromJson("{}", jvmErasure.java)
+                }
             }
         }
     }
-
-    fun getStringArrayList(key: String, value: ArrayList<String>): ArrayList<String> {
-        return if (intent != null) {
-            intent.getStringArrayListExtra(key) ?: value
-        } else {
-            bundle.getStringArrayList(key) ?: value
-        }
-    }
-
-    fun getCharSequenceArrayList(
-        key: String,
-        value: ArrayList<CharSequence>
-    ): ArrayList<CharSequence> {
-        return if (intent != null) {
-            intent.getCharSequenceArrayListExtra(key) ?: value
-        } else {
-            bundle.getCharSequenceArrayList(key) ?: value
-        }
-    }
-
-    fun getIntArrayList(key: String, value: ArrayList<Int>): ArrayList<Int> {
-        return if (intent != null) {
-            intent.getIntegerArrayListExtra(key) ?: value
-        } else {
-            bundle.getIntegerArrayList(key) ?: value
-        }
-    }
-
-    fun getParcelableArrayList(key: String, value: ArrayList<Parcelable>): ArrayList<Parcelable> {
-        return if (intent != null) {
-            intent.getParcelableArrayListExtra(key) ?: value
-        } else {
-            bundle.getParcelableArrayList(key) ?: value
-        }
-    }
-
-    fun getParcelable(key: String, value: Any): Any {
-        return if (intent != null) {
-            intent.getParcelableExtra(key) ?: value
-        } else {
-            bundle.getParcelable(key) ?: value
-        }
-    }
-
-    fun getSerializable(key: String, value: Any): Any {
-        return if (intent != null) {
-            intent.getSerializableExtra(key) ?: value
-        } else {
-            bundle.getSerializable(key) ?: value
-        }
-    }
-
-    //Put methods
-    fun putByte(key: String, value: Byte) {
-        intent?.putExtra(key, value) ?: bundle.putByte(key, value)
-    }
-
-    fun putShort(key: String, value: Short) {
-        intent?.putExtra(key, value) ?: bundle.putShort(key, value)
-    }
-
-    fun putInt(key: String, value: Int) {
-        intent?.putExtra(key, value) ?: bundle.putInt(key, value)
-    }
-
-    fun putFloat(key: String, value: Float) {
-        intent?.putExtra(key, value) ?: bundle.putFloat(key, value)
-    }
-
-    fun putDouble(key: String, value: Double) {
-        intent?.putExtra(key, value) ?: bundle.putDouble(key, value)
-    }
-
-    fun putLong(key: String, value: Long) {
-        intent?.putExtra(key, value) ?: bundle.putLong(key, value)
-    }
-
-    fun putBoolean(key: String, value: Boolean) {
-        intent?.putExtra(key, value) ?: bundle.putBoolean(key, value)
-    }
-
-    fun putChar(key: String, value: Char) {
-        intent?.putExtra(key, value) ?: bundle.putChar(key, value)
-    }
-
-    fun putCharSequence(key: String, value: CharSequence) {
-        intent?.putExtra(key, value) ?: bundle.putCharSequence(key, value)
-    }
-
-    fun putString(key: String, value: String) {
-        intent?.putExtra(key, value) ?: bundle.putString(key, value)
-    }
-
-    fun putByteArray(key: String, value: ByteArray) {
-        intent?.putExtra(key, value) ?: bundle.putByteArray(key, value)
-    }
-
-    fun putShortArray(key: String, value: ShortArray) {
-        intent?.putExtra(key, value) ?: bundle.putShortArray(key, value)
-    }
-
-    fun putIntArray(key: String, value: IntArray) {
-        intent?.putExtra(key, value) ?: bundle.putIntArray(key, value)
-    }
-
-    fun putFloatArray(key: String, value: FloatArray) {
-        intent?.putExtra(key, value) ?: bundle.putFloatArray(key, value)
-    }
-
-    fun putDoubleArray(key: String, value: DoubleArray) {
-        intent?.putExtra(key, value) ?: bundle.putDoubleArray(key, value)
-    }
-
-    fun putLongArray(key: String, value: LongArray) {
-        intent?.putExtra(key, value) ?: bundle.putLongArray(key, value)
-    }
-
-    fun putBooleanArray(key: String, value: BooleanArray) {
-        intent?.putExtra(key, value) ?: bundle.putBooleanArray(key, value)
-    }
-
-    fun putCharArray(key: String, value: CharArray) {
-        intent?.putExtra(key, value) ?: bundle.putCharArray(key, value)
-    }
-
-    fun putCharSequenceArray(key: String, value: Array<CharSequence>) {
-        intent?.putExtra(key, value) ?: bundle.putCharSequenceArray(key, value)
-    }
-
-    fun putStringArray(key: String, value: Array<String>) {
-        intent?.putExtra(key, value) ?: bundle.putStringArray(key, value)
-    }
-
-    fun putBundle(key: String, value: Bundle) {
-        intent?.putExtra(key, value) ?: bundle.putBundle(key, value)
-    }
-
-    fun putStringArrayList(key: String, value: ArrayList<String>) {
-        intent?.putStringArrayListExtra(key, value) ?: bundle.putStringArrayList(key, value)
-    }
-
-    fun putCharSequenceArrayList(
-        key: String,
-        value: ArrayList<CharSequence>
-    ) {
-        intent?.putCharSequenceArrayListExtra(key, value)
-            ?: bundle.putCharSequenceArrayList(key, value)
-    }
-
-    fun putIntArrayList(key: String, value: ArrayList<Int>) {
-        intent?.putIntegerArrayListExtra(key, value)
-            ?: bundle.putIntegerArrayList(key, value)
-    }
-
-    fun putParcelableArrayList(key: String, value: ArrayList<out Parcelable>) {
-        intent?.putParcelableArrayListExtra(key, value)
-            ?: bundle.putParcelableArrayList(key, value)
-    }
-
-    fun putParcelable(key: String, value: Parcelable) {
-        intent?.putExtra(key, value) ?: bundle.putParcelable(key, value)
-    }
-
-    fun putSerializable(key: String, value: Serializable) {
-        intent?.putExtra(key, value) ?: bundle.putSerializable(key, value)
-    }
+    return result as T
 }
 
 
@@ -372,10 +131,8 @@ internal fun <T> Optional.get(key: String, kType: KType, defaultValue: T?): T {
         typeOf<LongArray>() -> getLongArray(key, defaultValue.or { LongArray(0) })
         typeOf<BooleanArray>() -> getBooleanArray(key, defaultValue.or { BooleanArray(0) })
         typeOf<CharArray>() -> getCharArray(key, defaultValue.or { CharArray(0) })
-        typeOf<Array<CharSequence>>() -> getCharSequenceArray(key, defaultValue.or {
-            emptyArray<CharSequence>()
-        })
-        typeOf<Array<String>>() -> getStringArray(key, defaultValue.or { emptyArray<String>() })
+        typeOf<Array<CharSequence>>() -> getCharSequenceArray(key, defaultValue.or { emptyArray() })
+        typeOf<Array<String>>() -> getStringArray(key, defaultValue.or { emptyArray() })
 
         //custom type
         typeOf<Bundle>() -> getBundle(key, defaultValue.or { Bundle() })
@@ -391,20 +148,16 @@ internal fun <T> Optional.get(key: String, kType: KType, defaultValue: T?): T {
                 kType.isSubtypeOf(typeOf<List<*>>()) -> {
                     when {
                         kType.isSubtypeOf(typeOf<ArrayList<String>>()) -> {
-                            getStringArrayList(key, defaultValue.or { arrayListOf<String>() })
+                            getStringArrayList(key, defaultValue.or { arrayListOf() })
                         }
                         kType.isSubtypeOf(typeOf<ArrayList<CharSequence>>()) -> {
-                            getCharSequenceArrayList(
-                                key,
-                                defaultValue.or { arrayListOf<CharSequence>() })
+                            getCharSequenceArrayList(key, defaultValue.or { arrayListOf() })
                         }
                         kType.isSubtypeOf(typeOf<ArrayList<Int>>()) -> {
-                            getIntArrayList(key, defaultValue.or { arrayListOf<Int>() })
+                            getIntArrayList(key, defaultValue.or { arrayListOf() })
                         }
                         kType.isSubtypeOf(typeOf<ArrayList<Parcelable>>()) -> {
-                            getParcelableArrayList(
-                                key,
-                                defaultValue.or { arrayListOf<Parcelable>() })
+                            getParcelableArrayList(key, defaultValue.or { arrayListOf() })
                         }
                         else -> {
                             getJsonValue(key, defaultValue, kType, "[]")
@@ -440,6 +193,9 @@ internal fun <T> Optional.get(key: String, kType: KType, defaultValue: T?): T {
 
 @Suppress("UNCHECKED_CAST")
 internal fun <T> Optional.put(key: String, kType: KType, value: T) {
+    if (value is Boolean){
+
+    }
     when (kType) {
         //basic type
         typeOf<Byte>() -> putByte(key, value as Byte)
@@ -503,6 +259,81 @@ internal fun <T> Optional.put(key: String, kType: KType, value: T) {
                 }
                 else -> {
                     putString(key, gson.toJson(value))
+                }
+            }
+        }
+    }
+}
+
+internal fun bundleOf(vararg pairs: Pair<String, Any?>): Bundle = Bundle(pairs.size).apply {
+    for ((key, value) in pairs) {
+        when (value) {
+            null -> putString(key, null) // Any nullable type will suffice.
+
+            // Scalars
+            is Boolean -> putBoolean(key, value)
+            is Byte -> putByte(key, value)
+            is Char -> putChar(key, value)
+            is Double -> putDouble(key, value)
+            is Float -> putFloat(key, value)
+            is Int -> putInt(key, value)
+            is Long -> putLong(key, value)
+            is Short -> putShort(key, value)
+
+            // References
+            is Bundle -> putBundle(key, value)
+            is CharSequence -> putCharSequence(key, value)
+            is Parcelable -> putParcelable(key, value)
+
+            // Scalar arrays
+            is BooleanArray -> putBooleanArray(key, value)
+            is ByteArray -> putByteArray(key, value)
+            is CharArray -> putCharArray(key, value)
+            is DoubleArray -> putDoubleArray(key, value)
+            is FloatArray -> putFloatArray(key, value)
+            is IntArray -> putIntArray(key, value)
+            is LongArray -> putLongArray(key, value)
+            is ShortArray -> putShortArray(key, value)
+
+            // Reference arrays
+            is Array<*> -> {
+                val componentType = value::class.java.componentType!!
+                @Suppress("UNCHECKED_CAST") // Checked by reflection.
+                when {
+                    Parcelable::class.java.isAssignableFrom(componentType) -> {
+                        putParcelableArray(key, value as Array<Parcelable>)
+                    }
+                    String::class.java.isAssignableFrom(componentType) -> {
+                        putStringArray(key, value as Array<String>)
+                    }
+                    CharSequence::class.java.isAssignableFrom(componentType) -> {
+                        putCharSequenceArray(key, value as Array<CharSequence>)
+                    }
+                    Serializable::class.java.isAssignableFrom(componentType) -> {
+                        putSerializable(key, value)
+                    }
+                    else -> {
+                        val valueType = componentType.canonicalName
+                        throw IllegalArgumentException(
+                            "Illegal value array type $valueType for key \"$key\""
+                        )
+                    }
+                }
+            }
+
+            // Last resort. Also we must check this after Array<*> as all arrays are serializable.
+            is Serializable -> putSerializable(key, value)
+
+            else -> {
+                if (Build.VERSION.SDK_INT >= 18 && value is IBinder) {
+                    putBinder(key, value)
+                } else if (Build.VERSION.SDK_INT >= 21 && value is Size) {
+                    putSize(key, value)
+                } else if (Build.VERSION.SDK_INT >= 21 && value is SizeF) {
+                    putSizeF(key, value)
+                } else {
+                    val valueType = value.javaClass.canonicalName
+                    throw IllegalArgumentException("Illegal value type $valueType for key \"$key\"")
                 }
             }
         }

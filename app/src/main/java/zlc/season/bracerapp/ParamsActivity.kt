@@ -1,12 +1,12 @@
 package zlc.season.bracerapp
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import androidx.appcompat.app.AppCompatActivity
 import zlc.season.bracer.mutableParams
 import zlc.season.bracer.params
+import zlc.season.bracer.startActivity
 import zlc.season.bracerapp.databinding.ActivityTestBinding
 
 class ParamsActivity : AppCompatActivity() {
@@ -91,10 +91,10 @@ class ParamsActivity : AppCompatActivity() {
     }
 
     private fun startActivityNormal() {
-        val intent = Intent(this, ParamsActivity::class.java)
-        intent.putExtra("byteParams", 1.toByte())
-        intent.putExtra("this is custom key", 123.toByte())
-        startActivity(intent)
+        startActivity<ParamsActivity>(
+            "byteParams" to 1.toByte(),
+            "this is custom key" to 123.toByte()
+        )
     }
 
     private fun startFragmentNormal() {

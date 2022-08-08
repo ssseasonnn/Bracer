@@ -2,7 +2,6 @@ package zlc.season.bracerapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import zlc.season.bracer.start
 import zlc.season.bracer.startActivity
 import zlc.season.bracerapp.databinding.ActivityMainBinding
 
@@ -13,9 +12,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.button.setOnClickListener {
-            startActivity<ParamsActivity>(
-                "key" to 123
-            )
             startActivity<ParamsActivity> {
                 customParams = CustomParams1()
             }

@@ -2,11 +2,12 @@ package zlc.season.bracerapp
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import zlc.season.bracer.params
 import zlc.season.bracerapp.databinding.FragmentTestBinding
 
@@ -35,12 +36,16 @@ class ParamsFragment : Fragment() {
 
     var binding: FragmentTestBinding? = null
 
+    val viewModel by viewModels<ParamsViewModel>()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return FragmentTestBinding.inflate(inflater, container, false).also { this.binding = it }.root
+        viewModel.test()
+        return FragmentTestBinding.inflate(inflater, container, false)
+            .also { this.binding = it }.root
     }
 
     @SuppressLint("SetTextI18n")

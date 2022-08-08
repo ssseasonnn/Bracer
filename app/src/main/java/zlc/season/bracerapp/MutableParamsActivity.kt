@@ -2,10 +2,10 @@ package zlc.season.bracerapp
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.text.method.ScrollingMovementMethod
+import androidx.appcompat.app.AppCompatActivity
 import zlc.season.bracer.mutableParams
-import zlc.season.bracer.start
+import zlc.season.bracer.startActivity
 import zlc.season.bracerapp.databinding.ActivityTestBinding
 import java.math.BigDecimal
 
@@ -125,7 +125,7 @@ class MutableParamsActivity : AppCompatActivity() {
     }
 
     private fun startActivityByParams() {
-        MutableParamsActivity().apply {
+        startActivity<MutableParamsActivity> {
             customKeyParams = 1
             customParams = CustomParams1().apply {
                 a = "123"
@@ -156,7 +156,7 @@ class MutableParamsActivity : AppCompatActivity() {
             charArrayParams = charArrayOf('1', '2', '3')
             charSequenceArrayParams = Array(3) { "$it" }
             stringArrayParams = Array(3) { "$it" }
-        }.start(this)
+        }
     }
 
     private fun startFragmentByParams() {

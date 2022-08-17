@@ -13,6 +13,7 @@
 ## Prepare
 
 ### 1. Add the JitPack repository to your build file
+
 ```gradle
 allprojects {
     repositories {
@@ -26,7 +27,7 @@ allprojects {
 
 ```gradle
 dependencies {
-	implementation 'com.github.ssseasonnn:Bracer:1.0.6'
+	implementation 'com.github.ssseasonnn:Bracer:1.0.7'
 }
 ```
 
@@ -93,16 +94,16 @@ class DemoFragment : Fragment() {
 
 ```kotlin
 val fragment = DemoFragment().apply {
-        intParam = 1
-        booleanParam = true
-        stringParam = "abc"
-        customParam = CustomParams1()
+    intParam = 1
+    booleanParam = true
+    stringParam = "abc"
+    customParam = CustomParams1()
 }
 
 supportFragmentManager.beginTransaction().apply {
-        add(R.id.frameLayout, fragment)
-        commit()
-    }
+    add(R.id.frameLayout, fragment)
+    commit()
+}
 ```
 
 ### 3. 在ViewModel中获取Activity或者Fragment中的参数
@@ -143,7 +144,42 @@ class DemoActivity : AppCompatActivity() {
 
 > 要使用viewModels扩展，需要添加依赖：implementation 'androidx.fragment:fragment-ktx:1.5.1'
 
-### 4. 其他特性
+### 4. 从任何地方获取参数
+
+只要能拿到Activity或Fragment，或者Intent、Bundle，你都可以通过Bracer获取其中的参数
+
+```kotlin
+class TestAdapter(
+    val activity: Activity,
+    val fragment: Fragment,
+    val intent: Intent,
+    val bundle: Bundle
+) {
+    val paramFromActivity by activity.params<String>()
+    val paramFromFragment by fragment.params<String>()
+    val paramFromIntent by intent.params<String>()
+    val paramFromBundle by bundle.params<String>()
+
+    fun test() {
+        val string by activity.params<String>()
+    }
+}
+```
+
+### 5. `val` 和 `var`
+
+Bracer提供两种类型，`params`和`mutableParams`，分别对应kotlin中的`val`和`var`。
+
+```kotlin
+//只读
+val param by params<String>()
+
+//可读可写
+var mutableParams by mutableParams<String>()
+
+```
+
+### 6. 其他特性
 
 除此之外，Bracer还支持一些其他特性.
 
@@ -158,7 +194,6 @@ var customKeyParams by mutableParams<Byte>("this is custom key")
 ```kotlin
 var defaultParams by mutableParams<BigDecimal>(defaultValue = BigDecimal.ONE)
 ```
-
 
 ## License
 

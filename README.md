@@ -26,7 +26,7 @@ allprojects {
 
 ```gradle
 dependencies {
-	implementation 'com.github.ssseasonnn:Bracer:1.0.6'
+	implementation 'com.github.ssseasonnn:Bracer:1.0.7'
 }
 ```
 
@@ -139,7 +139,42 @@ class DemoActivity : AppCompatActivity() {
 
 > To use with viewModels extension function, you need to add dependencies：implementation 'androidx.fragment:fragment-ktx:1.5.1'
 
-### 4. Other Features
+### 4. Get params from everywhere
+
+You can use bracer anywhere, as long as you can get Activity or Fragment.
+
+```kotlin
+class TestAdapter(
+    val activity: Activity,
+    val fragment: Fragment,
+    val intent: Intent,
+    val bundle: Bundle
+) {
+    val paramFromActivity by activity.params<String>()
+    val paramFromFragment by fragment.params<String>()
+    val paramFromIntent by intent.params<String>()
+    val paramFromBundle by bundle.params<String>()
+
+    fun test(){
+        val string by activity.params<String>()
+    }
+}
+```
+
+### 5. `val` 和 `var`
+
+Bracer provides two types，`params` and `mutableParams`，corresponding to `val` and `var` in Kotlin.
+
+```kotlin
+//Read only
+val param by params<String>()
+
+//Read and Write
+var mutableParams by mutableParams<String>()
+
+```
+
+### 6. Other Features
 
 Custom key：
 

@@ -34,6 +34,6 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.5.1'
 
     implementation project(path: ':bracer')
-//    implementation 'com.github.ssseasonnn:Bracer:1.0.2'
+//    implementation 'com.github.ssseasonnn:Bracer:1.0.6'
     testImplementation 'junit:junit:4.13.2'
 }

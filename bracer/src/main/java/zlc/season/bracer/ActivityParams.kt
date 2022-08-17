@@ -11,8 +11,8 @@ class ActivityParamsDelegate<T>(
     private val customKey: String = "",
     private val defaultValue: T? = null,
     private val type: KType
-) : ReadOnlyProperty<Any, T> {
-    override fun getValue(thisRef: Any, property: KProperty<*>): T {
+) : ReadOnlyProperty<Any?, T> {
+    override fun getValue(thisRef: Any?, property: KProperty<*>): T {
         val key = customKey.ifEmpty { property.name }
         return Optional(activity.intent).get(key, type, defaultValue)
     }
@@ -23,13 +23,13 @@ class ActivityMutableParamsDelegate<T>(
     private val customKey: String = "",
     private val defaultValue: T? = null,
     private val type: KType
-) : ReadWriteProperty<Any, T> {
-    override fun getValue(thisRef: Any, property: KProperty<*>): T {
+) : ReadWriteProperty<Any?, T> {
+    override fun getValue(thisRef: Any?, property: KProperty<*>): T {
         val key = customKey.ifEmpty { property.name }
         return Optional(activity.intent).get(key, type, defaultValue)
     }
 
-    override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
         val intent = ActivityIntentHolder.createIntent(activity)
         val key = customKey.ifEmpty { property.name }
         Optional(intent).put(key, type, value)

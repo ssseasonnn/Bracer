@@ -58,6 +58,6 @@ class ParamsViewModel(private val stateHandle: SavedStateHandle) : ViewModel() {
     }
 
     fun test() {
-
+        val test by stateHandle.params<String>()
     }
 }
